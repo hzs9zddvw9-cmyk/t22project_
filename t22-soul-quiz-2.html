@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>產地靈魂顯影術 ── T22 產地振興計畫</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --yellow: #ffe201;
+    --teal: #15abbb;
+    --ink: #111111;
+    --white: #ffffff;
+    --gray-light: #f5f5f3;
+    --gray-mid: #e0e0dc;
+    --gray-dark: #888880;
+    --grain-opacity: 0.04;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { font-size: 16px; scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Noto Sans TC', sans-serif;
+    background: var(--white);
+    color: var(--ink);
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* Grain overlay */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9999;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+    opacity: var(--grain-opacity);
+    mix-blend-mode: overlay;
+  }
+
+  /* ── SCREENS ── */
+  .screen {
+    position: absolute;
+    inset: 0;
+    min-height: 100vh;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+    display: flex;
+    flex-direction: column;
+  }
+  .screen.active {
+    opacity: 1;
+    pointer-events: all;
+    position: relative;
+  }
+
+  /* ── WELCOME ── */
+  #welcome {
+    background: var(--ink);
+    color: var(--white);
+    padding: 0;
+    justify-content: space-between;
+    min-height: 100vh;
+  }
+
+  .welcome-top {
+    padding: 3rem 2rem 2rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .brand-label {
+    font-size: 0.6rem;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    color: var(--teal);
+    text-transform: uppercase;
+    margin-bottom: 2.5rem;
+  }
+
+  .welcome-title {
+    font-size: clamp(2.8rem, 10vw, 5rem);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.5rem;
+  }
+
+  .welcome-title span.accent {
+    color: var(--yellow);
+    display: block;
+  }
+
+  .welcome-subtitle {
+    font-size: 0.75rem;
+    font-weight: 300;
+    letter-spacing: 0.4em;
+    color: var(--gray-dark);
+    margin-bottom: 2.5rem;
+    text-transform: uppercase;
+  }
+
+  .welcome-desc {
+    font-size: 0.9rem;
+    line-height: 1.9;
+    color: rgba(255,255,255,0.65);
+    max-width: 380px;
+    margin-bottom: 3rem;
+  }
+
+  .welcome-bottom {
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .welcome-meta {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    color: var(--gray-dark);
+    line-height: 1.8;
+  }
+
+  .btn-start {
+    background: var(--yellow);
+    color: var(--ink);
+    border: none;
+    padding: 1rem 2rem;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-start::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 100%; height: 100%;
+    background: rgba(255,255,255,0.2);
+    transition: left 0.3s ease;
+  }
+  .btn-start:hover::before { left: 100%; }
+  .btn-start:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(255,226,1,0.3); }
+  .btn-start:active { transform: translateY(0); }
+
+  /* Decorative line */
+  .deco-line {
+    width: 3rem;
+    height: 1px;
+    background: var(--yellow);
+    margin-bottom: 2rem;
+  }
+
+  /* ── QUIZ ── */
+  #quiz {
+    background: var(--white);
+    padding: 0;
+    min-height: 100vh;
+  }
+
+  .quiz-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--white);
+    border-bottom: 1px solid var(--gray-mid);
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .quiz-logo {
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: var(--gray-dark);
+    text-transform: uppercase;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .progress-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .progress-bar {
+    height: 2px;
+    background: var(--gray-mid);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--yellow);
+    transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
+    position: relative;
+  }
+
+  .progress-fill::after {
+    content: '';
+    position: absolute;
+    right: 0; top: 50%;
+    transform: translateY(-50%);
+    width: 6px; height: 6px;
+    background: var(--ink);
+    border-radius: 50%;
+  }
+
+  .progress-text {
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    color: var(--gray-dark);
+  }
+
+  .quiz-body {
+    padding: 2.5rem 2rem;
+    max-width: 560px;
+    margin: 0 auto;
+  }
+
+  .question-wrap {
+    opacity: 1;
+    transition: opacity 0.35s ease, transform 0.35s ease;
+  }
+  .question-wrap.fade-out {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  .question-wrap.fade-in {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  .q-number {
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    color: var(--teal);
+    font-weight: 500;
+    margin-bottom: 1.2rem;
+    text-transform: uppercase;
+  }
+
+  .q-text {
+    font-size: clamp(1rem, 3.5vw, 1.15rem);
+    font-weight: 700;
+    line-height: 1.7;
+    margin-bottom: 2rem;
+    letter-spacing: 0.01em;
+  }
+
+  .options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .option-btn {
+    width: 100%;
+    background: var(--white);
+    border: 1.5px solid var(--gray-mid);
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s ease;
+    font-family: 'Noto Sans TC', sans-serif;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .option-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--yellow);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    z-index: 0;
+  }
+
+  .option-btn:hover { border-color: var(--ink); }
+  .option-btn:hover::before { opacity: 0.06; }
+
+  .option-btn.selected {
+    border-color: var(--ink);
+    background: var(--ink);
+    color: var(--white);
+  }
+  .option-btn.selected .opt-key { color: var(--yellow); background: transparent; border-color: var(--yellow); }
+
+  .opt-key {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--gray-dark);
+    border: 1px solid var(--gray-mid);
+    padding: 0.2rem 0.45rem;
+    flex-shrink: 0;
+    margin-top: 0.05rem;
+    transition: all 0.2s ease;
+    position: relative;
+    z-index: 1;
+    line-height: 1.4;
+  }
+
+  .opt-text {
+    font-size: 0.85rem;
+    line-height: 1.75;
+    position: relative;
+    z-index: 1;
+    letter-spacing: 0.01em;
+  }
+
+  /* ── RESULT ── */
+  #result {
+    background: var(--ink);
+    color: var(--white);
+    min-height: 100vh;
+  }
+
+  .result-header {
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .result-logo {
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: var(--gray-dark);
+    text-transform: uppercase;
+  }
+
+  .result-tag {
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: var(--teal);
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .result-body {
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 2.5rem 2rem 4rem;
+  }
+
+  /* Passport card */
+  .passport-card {
+    border: 1px solid rgba(255,255,255,0.1);
+    position: relative;
+    margin-bottom: 2.5rem;
+    overflow: hidden;
+  }
+
+  .passport-top {
+    background: var(--yellow);
+    color: var(--ink);
+    padding: 2rem 2rem 1.5rem;
+    position: relative;
+  }
+
+  .passport-type-label {
+    font-size: 0.55rem;
+    font-weight: 700;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    margin-bottom: 0.8rem;
+    opacity: 0.6;
+  }
+
+  .passport-element {
+    font-size: clamp(3rem, 12vw, 5.5rem);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    margin-bottom: 0.3rem;
+  }
+
+  .passport-element em {
+    font-style: normal;
+    font-size: 0.3em;
+    letter-spacing: 0.05em;
+    vertical-align: middle;
+    opacity: 0.6;
+    font-weight: 500;
+  }
+
+  .passport-tagline {
+    font-size: 0.8rem;
+    font-weight: 500;
+    line-height: 1.5;
+    letter-spacing: 0.02em;
+    opacity: 0.75;
+  }
+
+  .passport-deco {
+    position: absolute;
+    right: -1.5rem;
+    top: -1.5rem;
+    width: 8rem;
+    height: 8rem;
+    border-radius: 50%;
+    border: 1px solid rgba(0,0,0,0.1);
+  }
+  .passport-deco-2 {
+    position: absolute;
+    right: 1.5rem;
+    top: 1.5rem;
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    border: 1px solid rgba(0,0,0,0.08);
+  }
+
+  .passport-mid {
+    padding: 1.5rem 2rem;
+    display: grid;
+    grid-template-columns: 1fr 1px 1fr;
+    gap: 1.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .passport-divider {
+    background: rgba(255,255,255,0.08);
+  }
+
+  .passport-field label {
+    display: block;
+    font-size: 0.55rem;
+    letter-spacing: 0.25em;
+    color: var(--gray-dark);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  .passport-field p {
+    font-size: 0.8rem;
+    line-height: 1.6;
+    font-weight: 400;
+  }
+
+  .passport-bottom {
+    padding: 1.5rem 2rem;
+  }
+
+  .passport-section-label {
+    font-size: 0.55rem;
+    letter-spacing: 0.25em;
+    color: var(--gray-dark);
+    text-transform: uppercase;
+    margin-bottom: 0.8rem;
+  }
+
+  .personality-text {
+    font-size: 0.85rem;
+    line-height: 1.85;
+    color: rgba(255,255,255,0.75);
+  }
+
+  /* Info sections */
+  .info-section {
+    margin-bottom: 1.5rem;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding-top: 1.5rem;
+  }
+
+  .info-label {
+    font-size: 0.55rem;
+    letter-spacing: 0.25em;
+    color: var(--teal);
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 0.8rem;
+  }
+
+  .info-content {
+    font-size: 0.85rem;
+    line-height: 1.85;
+    color: rgba(255,255,255,0.7);
+  }
+
+  .product-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .product-list li {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.65);
+    padding-left: 1rem;
+    position: relative;
+  }
+  .product-list li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--yellow);
+    font-size: 0.7rem;
+  }
+
+  /* MRZ strip */
+  .mrz-strip {
+    margin-top: 2rem;
+    padding: 1rem;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    font-size: 0.5rem;
+    letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.2);
+    font-family: 'Courier New', monospace;
+    line-height: 1.6;
+    overflow: hidden;
+    word-break: break-all;
+  }
+
+  /* Buttons */
+  .btn-retry {
+    width: 100%;
+    background: transparent;
+    border: 1.5px solid rgba(255,255,255,0.2);
+    color: var(--white);
+    padding: 1rem;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    margin-top: 2rem;
+    text-transform: uppercase;
+  }
+  .btn-retry:hover {
+    border-color: var(--yellow);
+    color: var(--yellow);
+  }
+
+  /* Score dots */
+  .score-row {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+  }
+  .score-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    align-items: center;
+  }
+  .score-dot {
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+  }
+  .score-dot.filled { background: var(--yellow); }
+  .score-num {
+    font-size: 0.55rem;
+    letter-spacing: 0.1em;
+    color: var(--gray-dark);
+  }
+
+  @media (min-width: 600px) {
+    .welcome-top { padding: 4rem 3rem 3rem; }
+    .welcome-bottom { padding: 2rem 3rem; }
+    .quiz-header { padding: 1rem 3rem; }
+    .quiz-body { padding: 3rem; }
+    .result-header { padding: 1.5rem 3rem; }
+    .result-body { padding: 3rem 3rem 5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ WELCOME ══ -->
+<div class="screen active" id="welcome">
+  <div class="welcome-top">
+    <div class="brand-label">T22 產地振興計畫 ✕ 台灣設計研究院</div>
+    <div class="deco-line"></div>
+    <h1 class="welcome-title">
+      產地<span class="accent">靈魂</span>顯影術
+    </h1>
+    <p class="welcome-subtitle">Soul Origin Developer</p>
+    <p class="welcome-desc">
+      每一片土地都有自己的性格。<br>
+      石的堅靜、土的流動、草的韌性、鐵的精準——<br>
+      透過 12 個問題，找出你的靈魂原材料。
+    </p>
+  </div>
+  <div class="welcome-bottom">
+    <div class="welcome-meta">
+      12 QUESTIONS<br>
+      4 ORIGINS<br>
+      1 TRUE SELF
+    </div>
+    <button class="btn-start" onclick="startQuiz()">
+      開啟顯影 →
+    </button>
+  </div>
+</div>
+
+<!-- ══ QUIZ ══ -->
+<div class="screen" id="quiz">
+  <header class="quiz-header">
+    <div class="quiz-logo">T22 / SOD</div>
+    <div class="progress-wrap">
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+      </div>
+      <div class="progress-text" id="progressText">0 / 12</div>
+    </div>
+  </header>
+  <div class="quiz-body">
+    <div class="question-wrap" id="questionWrap">
+      <div class="q-number" id="qNumber">Q 01 / 12</div>
+      <p class="q-text" id="qText"></p>
+      <div class="options-list" id="optionsList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ RESULT ══ -->
+<div class="screen" id="result">
+  <header class="result-header">
+    <div class="result-logo">T22 / SOD ── 靈魂通行證</div>
+    <div class="result-tag">Soul Pass</div>
+  </header>
+  <div class="result-body" id="resultBody">
+    <!-- dynamically filled -->
+  </div>
+</div>
+
+<script>
+const QUESTIONS = [
+  {
+    q: "當好不容易熬到週五深夜，你通常會選擇用什麼方式切換成「週末模式」？",
+    opts: [
+      { key: "A", text: "獨自待在房間，挑一張很久沒聽的黑膠或歌單，調一杯剛好的酒。" },
+      { key: "B", text: "隨心所欲地滑手機或出門亂晃，看今晚的風把心情吹向哪裡就去哪。" },
+      { key: "C", text: "點起香氛蠟燭、換上最舒服的純棉睡衣，做一場徹底放鬆的冥想或拉伸。" },
+      { key: "D", text: "把累積一週的髒衣服全部洗掉、房間徹底打掃一遍，看著東西歸位才安心。" }
+    ]
+  },
+  {
+    q: "如果可以挑選一件器物陪伴你的日常，你最無法抗拒哪種質感的物件？",
+    opts: [
+      { key: "A", text: "有著天然不規則紋理、摸起來冰涼卻沉甸甸的桌飾或鎮紙。" },
+      { key: "B", text: "表面有手工捏製痕跡、釉料在光線下會呈現溫潤漸層的手工餐碗。" },
+      { key: "C", text: "帶著淡淡草本植物香氣、包裝樸實卻能看見纖維的粗糙紙張或織品。" },
+      { key: "D", text: "線條極度俐落、邊角精準對齊，閃爍著冷冽科技感或工業風的金屬文具。" }
+    ]
+  },
+  {
+    q: "來到一座陌生城市旅行，哪種地方最容易吸引你的腳步？",
+    opts: [
+      { key: "A", text: "百年歷史的斷垣殘壁、廢棄礦場或巨大的自然地質景觀。" },
+      { key: "B", text: "隱密巷弄裡的獨立藝廊、當代前衛小劇場，或風格強烈的選品店。" },
+      { key: "C", text: "隱身在田野間的在地老派茶館、小農市集，或當地的土地公廟。" },
+      { key: "D", text: "機械感十足的舊鐵道園區、重工業遺址，或展示精細工藝的博物館。" }
+    ]
+  },
+  {
+    q: "朋友眼中的你，通常在團體中扮演著什麼樣的角色？",
+    opts: [
+      { key: "A", text: "平時話不多，但關鍵時刻一開口就能給出最一針見血、可靠建議的靠山。" },
+      { key: "B", text: "想法跳躍、情緒豐富，今天想吃火鍋明天想爬山，讓人永遠猜不透。" },
+      { key: "C", text: "永遠的傾聽者，像溫和的陽光一樣默默陪伴，從來不把壓力強加給別人。" },
+      { key: "D", text: "行動派的計畫通！旅行前會做好精準到分鐘的 Excel 表格，絕對不允許出錯。" }
+    ]
+  },
+  {
+    q: "你心中最理想的「靈魂充電旅行」，沿途的風景應該是？",
+    opts: [
+      { key: "A", text: "幾乎沒有手機訊號的深山高谷，只有風聲和巨大的岩壁陪著我。" },
+      { key: "B", text: "一趟毫無計畫的流浪，走到哪算到哪，甚至故意在未知的街區迷路。" },
+      { key: "C", text: "住在能看見稻浪或海浪的民宿裡，睡到自然醒，下午去泡個溫泉、喝口熱茶。" },
+      { key: "D", text: "探訪藏在鄉鎮裡的職人工坊，親眼看一件物品從無到有的製造過程。" }
+    ]
+  },
+  {
+    q: "如果工作或生活突然陷入死胡同、進退兩難時，你通常會怎麼應對？",
+    opts: [
+      { key: "A", text: "先讓自己完全抽離，切斷與外界的聯繫，等內心徹底平靜後再說。" },
+      { key: "B", text: "既然這條路不通，那就立刻換個方向，反正條條大路通羅馬，搞不好有意外收穫。" },
+      { key: "C", text: "找信任的朋友傾訴，或者去大自然走走，藉由溫柔的陪伴或環境來療癒受傷的心。" },
+      { key: "D", text: "拿出筆記本，開始一條條列出問題、分析原因、擬定 A/B/C 解決方案，用行動克服焦慮。" }
+    ]
+  },
+  {
+    q: "閉上眼睛想像一下，當你走進一個完全放鬆的空間，你希望指尖觸摸到的是什麼材質？",
+    opts: [
+      { key: "A", text: "粗糙、冰涼，帶有厚重歷史感與自然鑿面的天然岩壁。" },
+      { key: "B", text: "剛從窯爐出爐、帶著微微餘溫，表面滑順卻帶有一點點手作凹凸感的陶器。" },
+      { key: "C", text: "陽光曬過、帶有微微草本香氣，澎鬆且柔軟的亞麻布料。" },
+      { key: "D", text: "邊角被打磨得極其光滑、線條俐落且帶有冷冽科技感的拋光金屬。" }
+    ]
+  },
+  {
+    q: "在與親密的人（如伴侶或摯友）發生爭執時，你通常是哪種防衛機制？",
+    opts: [
+      { key: "A", text: "築起高牆。習慣用冷戰或沉默來面對，需要極大的個人空間來消化情緒。" },
+      { key: "B", text: "陰晴不定。當下情緒起伏很大，但常常氣消了之後又覺得無所謂了，讓人抓不透。" },
+      { key: "C", text: "委曲求全。傾向先安撫對方的情緒、退一步海闊天空，但內心其實默默在忍耐。" },
+      { key: "D", text: "講道理。一定要把事情的對錯、邏輯講清楚，不喜歡和稀泥，直球對決。" }
+    ]
+  },
+  {
+    q: "當你要為自己的房間挑選一幅畫或海報，哪種視覺風格最能映照你的內心？",
+    opts: [
+      { key: "A", text: "大面積留白，只有幾道沉穩黑白線條的極簡山水或潑墨意象。" },
+      { key: "B", text: "色彩濃烈、線條抽象，每個人看都有不同解讀的當代前衛畫作。" },
+      { key: "C", text: "色調溫暖、充滿綠意與大地色系，帶有手繪感的小鎮生活插畫。" },
+      { key: "D", text: "幾何圖形精準對稱、充滿線條感與未來感的人造機械/建築結構圖。" }
+    ]
+  },
+  {
+    q: "週末舉辦了一場地方文化祭，以下四個體驗工作坊，你最想報名哪一個？",
+    opts: [
+      { key: "A", text: "【時間的鑿痕】古老石雕與邊料再生手作 ── 把千億年的記憶帶回家。" },
+      { key: "B", text: "【浴火的揉捏】手捏陶器與釉料盲盒實驗 ── 體驗一場不完美的流動美學。" },
+      { key: "C", text: "【田野的慢調】小農產地餐桌與草本染織 ── 感受與土地共生的溫柔煙火氣。" },
+      { key: "D", text: "【金屬的修煉】微型五金鍛造與精密工具組裝 ── 體驗一日職人的精準極致。" }
+    ]
+  },
+  {
+    q: "如果可以隨心所欲地選擇一種人生狀態，你最嚮往的是？",
+    opts: [
+      { key: "A", text: "像一座孤島，不迎合世界的潮流，獨自美麗且無可撼動。" },
+      { key: "B", text: "像水一樣，可以裝進任何形狀的容器，在不同的領域裡游刃有餘。" },
+      { key: "C", text: "像原野上的草，不論經歷多少風雨，春天一到依然能溫柔地綠滿大地。" },
+      { key: "D", text: "像一台運轉精密的時鐘，每個零件都完美嚙合，活得高效、清澈且有掌控感。" }
+    ]
+  },
+  {
+    q: "這場靈魂測驗即將結束，請憑直覺按下最後的快門，你希望顯影出來的底片色調是？",
+    opts: [
+      { key: "A", text: "深邃的黑白單色，洗鍊、冷靜且純粹。" },
+      { key: "B", text: "帶有魔幻感的偏藍、偏綠異色調，神秘、未知且充滿張力。" },
+      { key: "C", text: "帶有顆粒感的溫暖黃昏色調，復古、溫柔且充滿人情味。" },
+      { key: "D", text: "高對比、邊緣無比銳利的冷調金屬色，現代、精準且飽滿。" }
+    ]
+  }
+];
+
+const RESULTS = {
+  A: {
+    icon: "💎",
+    name: "石系",
+    sub: "花蓮・石板",
+    tagline: "在裂縫中尋求新生，堅硬而頑強固執",
+    personality: "你享受孤獨與沉澱，被時間留下的沉靜感吸引。不迎合世界的潮流，獨自美麗且無可撼動。",
+    route: "花蓮・山海間的寂靜留白",
+    products: ["T22 限定 ── 大理石幾何擴香石", "蛇紋石冷冽餐盤"]
+  },
+  B: {
+    icon: "🏺",
+    name: "土系",
+    sub: "鶯歌・陶瓷",
+    tagline: "看似冷酷實則柔軟，多變又難以捉摸",
+    personality: "你想法跳躍、情緒豐富，讓人永遠猜不透。像水與泥土一樣，可以裝進任何形狀的容器。",
+    route: "鶯歌・窯火與泥土的百變劇場",
+    products: ["T22 明星商品 ── KOGA 許家陶器品", "米其林餐廳聯名翻轉陶杯"]
+  },
+  C: {
+    icon: "🌾",
+    name: "草系",
+    sub: "北投・稻田",
+    tagline: "煙硝中生長出溫柔，溫順而保有韌性",
+    personality: "你是永遠的傾聽者，像溫和的陽光默默陪伴。不論經歷多少風雨，依然能溫柔地綠滿大地。",
+    route: "北投・煙硝與稻香的療癒慢活",
+    products: ["T22 限定 ── 北投小農火山茶包禮盒", "硫磺泉質洗沐美學組"]
+  },
+  D: {
+    icon: "⚙️",
+    name: "鐵系",
+    sub: "彰化・五金",
+    tagline: "熱血成就精實細節，可靠且細膩如斯",
+    personality: "你擁有極度清澈的理性與高密度的執行力。像運轉精密的時鐘，活得高效且偏執於細節。",
+    route: "彰化・工藝細節之刃的修煉之旅",
+    products: ["T22 限定 ── 精密鍛造防滑不鏽鋼隨行杯", "彰化職人手打極簡黑金工具組"]
+  }
+};
+
+let scores = { A: 0, B: 0, C: 0, D: 0 };
+let current = 0;
+const TOTAL = 12;
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => {
+    s.classList.remove('active');
+    s.style.position = 'absolute';
+  });
+  const target = document.getElementById(id);
+  target.style.position = 'relative';
+  setTimeout(() => target.classList.add('active'), 10);
+}
+
+function startQuiz() {
+  scores = { A: 0, B: 0, C: 0, D: 0 };
+  current = 0;
+  showScreen('quiz');
+  renderQuestion();
+}
+
+function renderQuestion(dir = 'in') {
+  const wrap = document.getElementById('questionWrap');
+  const q = QUESTIONS[current];
+
+  wrap.classList.add('fade-in');
+  setTimeout(() => {
+    document.getElementById('qNumber').textContent = `Q ${String(current + 1).padStart(2, '0')} / ${TOTAL}`;
+    document.getElementById('qText').textContent = q.q;
+
+    const list = document.getElementById('optionsList');
+    list.innerHTML = '';
+    q.opts.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'option-btn';
+      btn.innerHTML = `<span class="opt-key">${opt.key}</span><span class="opt-text">${opt.text}</span>`;
+      btn.addEventListener('click', () => selectOption(opt.key, btn));
+      list.appendChild(btn);
+    });
+
+    const pct = (current / TOTAL) * 100;
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressText').textContent = `${current} / ${TOTAL}`;
+
+    wrap.classList.remove('fade-in');
+  }, 50);
+}
+
+function selectOption(key, btn) {
+  // prevent double-tap
+  if (btn.classList.contains('selected')) return;
+  document.querySelectorAll('.option-btn').forEach(b => b.style.pointerEvents = 'none');
+  btn.classList.add('selected');
+  scores[key]++;
+
+  setTimeout(() => {
+    const wrap = document.getElementById('questionWrap');
+    wrap.classList.add('fade-out');
+    setTimeout(() => {
+      wrap.classList.remove('fade-out');
+      current++;
+      if (current >= TOTAL) {
+        showResult();
+      } else {
+        document.querySelectorAll('.option-btn').forEach(b => b.style.pointerEvents = '');
+        renderQuestion();
+        const pct = (current / TOTAL) * 100;
+        document.getElementById('progressFill').style.width = pct + '%';
+        document.getElementById('progressText').textContent = `${current} / ${TOTAL}`;
+      }
+    }, 380);
+  }, 280);
+}
+
+function showResult() {
+  // find winner
+  let winner = 'A';
+  let max = 0;
+  Object.entries(scores).forEach(([k, v]) => { if (v > max) { max = v; winner = k; } });
+  const r = RESULTS[winner];
+
+  // MRZ line
+  const now = new Date();
+  const dateStr = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
+  const mrz1 = `T22SOD<<${r.name.padEnd(8,'<')}<<T22PRODUCTORIGIN<TAIWAN<${dateStr}`;
+  const mrz2 = `${winner}${scores.A}${scores.B}${scores.C}${scores.D}<<SOUL${max.toString().padStart(2,'0')}OF${TOTAL}<<${dateStr}TAIWAN<T22`;
+
+  document.getElementById('resultBody').innerHTML = `
+    <div class="passport-card">
+      <div class="passport-top">
+        <div class="passport-deco"></div>
+        <div class="passport-deco-2"></div>
+        <div class="passport-type-label">Soul Origin Pass / 靈魂產地通行證</div>
+        <div class="passport-element">${r.name}<em>${r.sub}</em></div>
+        <div class="passport-tagline">${r.tagline}</div>
+      </div>
+      <div class="passport-mid">
+        <div class="passport-field">
+          <label>靈魂元素</label>
+          <p>${r.icon} ${r.name}</p>
+        </div>
+        <div class="passport-divider"></div>
+        <div class="passport-field">
+          <label>產地座標</label>
+          <p>${r.sub}</p>
+        </div>
+      </div>
+      <div class="passport-bottom">
+        <div class="passport-section-label">性格解密 ── Character Decode</div>
+        <p class="personality-text">${r.personality}</p>
+        <div class="score-row">
+          ${Object.entries(scores).map(([k, v]) => `
+            <div class="score-item">
+              <div style="display:flex;gap:2px">
+                ${Array.from({length:v}).map(() => '<div class="score-dot filled"></div>').join('')}
+                ${Array.from({length:TOTAL-v}).map(() => '<div class="score-dot"></div>').join('')}
+              </div>
+              <div class="score-num">${RESULTS[k].name[0]}系 ${v}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>
+
+    <div class="info-section">
+      <div class="info-label">✦ 漫遊路線 ── Soul Route</div>
+      <p class="info-content">【${r.route}】</p>
+    </div>
+
+    <div class="info-section">
+      <div class="info-label">✦ T22 靈魂選品 ── Curated Collection</div>
+      <ul class="product-list">
+        ${r.products.map(p => `<li>${p}</li>`).join('')}
+      </ul>
+    </div>
+
+    <div class="mrz-strip">
+      ${mrz1}<br>${mrz2}
+    </div>
+
+    <button class="btn-retry" onclick="restart()">↺ 重新測驗 ── RESTART</button>
+  `;
+
+  showScreen('result');
+}
+
+function restart() {
+  showScreen('welcome');
+}
+</script>
+</body>
+</html>
